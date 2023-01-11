@@ -1,4 +1,4 @@
-package com.diotech.minhasfinancas.entity;
+package com.diotech.minhasfinancas.enums;
 
 public enum StatusLancamento {
         PENDENTE,

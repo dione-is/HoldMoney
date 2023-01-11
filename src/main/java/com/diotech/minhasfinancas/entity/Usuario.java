@@ -1,13 +1,15 @@
 package com.diotech.minhasfinancas.entity;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "usuario", schema = "holdmoney")
+@Table(name = "usuario", schema = "financas")
 @Data
+@Builder
 public class Usuario {
 
     @Id

@@ -1,15 +1,16 @@
 package com.diotech.minhasfinancas.entity;
 
+import com.diotech.minhasfinancas.enums.StatusLancamento;
+import com.diotech.minhasfinancas.enums.TipoLancamento;
 import lombok.Data;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
-@Table(name = "lancamento", schema = "holdmoney")
+@Table(name = "lancamento", schema = "financas")
 @Data
 public class Lancamento {
     @Id
