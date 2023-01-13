@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.beans.PropertyEditorSupport;
+
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
@@ -25,5 +27,13 @@ public class UsuarioRepositoryTest {
         boolean result = repository.existsByEmail("dione0905@gmail.com");
 
         Assertions.assertThat(result).isTrue();
+    }
+
+    @Test
+    public void hasUsuarioCadastrado(){
+        repository.deleteAll();
+        boolean result = repository.existsByEmail("dione0905@gmail.com");
+
+        Assertions.assertThat(result).isFalse();
     }
 }
