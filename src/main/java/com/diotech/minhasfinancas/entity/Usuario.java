@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Table(name = "usuario", schema = "financas")
@@ -23,14 +22,14 @@ public class Usuario {
     @Column(name = "senha")
     private String senha;
 
-    public Usuario(Long id, String nome, String email, String senha){
+    public Usuario(Long id, String nome, String email, String senha) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
     }
 
-    public Usuario(){
+    public Usuario() {
 
     }
 
