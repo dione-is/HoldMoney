@@ -1,6 +1,7 @@
 package com.diotech.minhasfinancas.service;
 
 import com.diotech.minhasfinancas.entity.Lancamento;
+import com.diotech.minhasfinancas.entity.Usuario;
 import com.diotech.minhasfinancas.enums.StatusLancamento;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface LancamentoService {
     void atualizarStatus(Lancamento lancamento, StatusLancamento statusLancamento);
 
     void validar(Lancamento lancamento);
+
+    Lancamento obterLancamentoPorId(Long id);
 }

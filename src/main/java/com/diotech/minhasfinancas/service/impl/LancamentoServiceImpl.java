@@ -1,6 +1,7 @@
 package com.diotech.minhasfinancas.service.impl;
 
 import com.diotech.minhasfinancas.entity.Lancamento;
+import com.diotech.minhasfinancas.entity.Usuario;
 import com.diotech.minhasfinancas.enums.StatusLancamento;
 import com.diotech.minhasfinancas.exception.RegraNegocioException;
 import com.diotech.minhasfinancas.repository.LancamentoRepository;
@@ -11,8 +12,12 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.crypto.Data;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LancamentoServiceImpl implements LancamentoService {
@@ -20,11 +25,17 @@ public class LancamentoServiceImpl implements LancamentoService {
     @Autowired
     private LancamentoRepository repository;
 
+    @Autowired
+    private UsuarioServiceImpl usuarioService;
+
     @Override
     @Transactional
     public Lancamento salvar(Lancamento lancamento) {
+        Optional<Usuario> usuario = usuarioService.buscarUsuarioPorId(lancamento.getUsuario().getId());
+        lancamento.setUsuario(usuario.orElse(null));
         validar(lancamento);
         lancamento.setStatus(StatusLancamento.PENDENTE);
+        lancamento.setDataCadastro(LocalDate.now());
         return repository.save(lancamento);
     }
 
@@ -74,7 +85,7 @@ public class LancamentoServiceImpl implements LancamentoService {
         if(lancamento.getAno() == null || lancamento.getAno().toString().length() != 4){
             throw  new RegraNegocioException("Informe um Ano válido");
         }
-        if(lancamento.getUsuario() == null || lancamento.getId() == null){
+        if(lancamento.getUsuario() == null || lancamento.getUsuario().getId() == null){
             throw new RegraNegocioException("Informe um Usuário válido");
         }
         if(lancamento.getValor() == null || lancamento.getValor().compareTo(BigDecimal.ZERO) < 1){
@@ -83,5 +94,11 @@ public class LancamentoServiceImpl implements LancamentoService {
         if(lancamento.getTipo() == null){
             throw new RegraNegocioException("Informe um Tipo Lançamento válido");
         }
+    }
+
+    @Override
+    public Lancamento obterLancamentoPorId(Long id) {
+        Optional<Lancamento> lancamento = repository.findById(id);
+        return lancamento.orElse(null);
     }
 }

@@ -19,11 +19,11 @@ public class UsuarioController {
     @Autowired
     UsuarioService service;
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<Usuario> salvar(@RequestBody Usuario usuario){
         try {
             usuario = service.salvarUsuario(usuario);
-            return new ResponseEntity(usuario, HttpStatus.CREATED);
+            return new ResponseEntity<>(usuario, HttpStatus.CREATED);
         }catch (RegraNegocioException e){
            throw new ResponseStatusException( HttpStatus.BAD_REQUEST, e.getMessage());
         }
