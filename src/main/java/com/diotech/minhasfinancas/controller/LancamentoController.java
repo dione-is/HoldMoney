@@ -28,7 +28,7 @@ public class LancamentoController {
 
     @PutMapping("{id}")
     public ResponseEntity<Lancamento> atualizar(@PathVariable Long id, @RequestBody Lancamento lancamento) {
-        if (service.obterLancamentoPorId(id) != null) {
+        if (service.obterLancamentoPorId(id).isPresent() && id.equals(lancamento.getId())) {
             try {
                 service.atualizar(lancamento);
                 return ResponseEntity.ok(lancamento);

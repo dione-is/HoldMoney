@@ -5,6 +5,7 @@ import com.diotech.minhasfinancas.entity.Usuario;
 import com.diotech.minhasfinancas.enums.StatusLancamento;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LancamentoService {
 
@@ -20,5 +21,5 @@ public interface LancamentoService {
 
     void validar(Lancamento lancamento);
 
-    Lancamento obterLancamentoPorId(Long id);
+    Optional<Lancamento> obterLancamentoPorId(Long id);
 }
