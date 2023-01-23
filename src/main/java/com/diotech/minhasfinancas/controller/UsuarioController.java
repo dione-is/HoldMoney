@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @RestController
@@ -20,23 +21,33 @@ public class UsuarioController {
     UsuarioService service;
 
     @PostMapping("/")
-    public ResponseEntity<Usuario> salvar(@RequestBody Usuario usuario){
+    public ResponseEntity<Usuario> salvar(@RequestBody Usuario usuario) {
         try {
             usuario = service.salvarUsuario(usuario);
             return new ResponseEntity<>(usuario, HttpStatus.CREATED);
-        }catch (RegraNegocioException e){
-           throw new ResponseStatusException( HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (RegraNegocioException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
     @PostMapping("/autenticar")
-    public ResponseEntity<Usuario> autenticar(@RequestBody Usuario usuario){
-        try{
+    public ResponseEntity<Usuario> autenticar(@RequestBody Usuario usuario) {
+        try {
             usuario = service.autenticar(usuario.getEmail(), usuario.getSenha());
             return ResponseEntity.ok(usuario);
-        }catch (ErroAutenticacao e){
+        } catch (ErroAutenticacao e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
+    }
 
+    @GetMapping("{id}/buscar-saldo")
+    public ResponseEntity buscarSaldo(@PathVariable Long id) {
+        return service.buscarUsuarioPorId(id).map(entity -> {
+            try {
+                return ResponseEntity.ok(service.BuscarSaldoUsuario(id));
+            } catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            }
+        }).orElseGet(() -> new ResponseEntity("usuario informado nao encontrado", HttpStatus.BAD_REQUEST));
     }
 }

@@ -1,6 +1,10 @@
 package com.diotech.minhasfinancas.controller;
 
+import com.diotech.minhasfinancas.dto.StatusLancamentoDTO;
 import com.diotech.minhasfinancas.entity.Lancamento;
+import com.diotech.minhasfinancas.entity.Usuario;
+import com.diotech.minhasfinancas.enums.StatusLancamento;
+import com.diotech.minhasfinancas.enums.TipoLancamento;
 import com.diotech.minhasfinancas.exception.RegraNegocioException;
 import com.diotech.minhasfinancas.service.impl.LancamentoServiceImpl;
 import com.diotech.minhasfinancas.service.impl.UsuarioServiceImpl;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/lancamento/")
@@ -46,6 +51,23 @@ public class LancamentoController {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lançamento não encontrado na base de Dados");
     }
 
+    @PutMapping("{id}/atualiza-status")
+    public ResponseEntity atualizarStatus(@PathVariable Long id, @RequestBody StatusLancamentoDTO status){
+
+       return service.obterLancamentoPorId(id).map(entity -> {
+           if(status == null){
+               throw new ResponseStatusException( HttpStatus.BAD_REQUEST, "Status de lancamento nao informado!");
+           }
+           StatusLancamento statusLancamento = StatusLancamento.valueOf(status.getStatus());
+            try {
+                    service.atualizarStatus(entity, statusLancamento);
+                    return ResponseEntity.ok(entity);
+            }catch (RegraNegocioException e){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            }
+        }).orElseGet( () -> new ResponseEntity("Lancamento não encontrado na base de Dados.", HttpStatus.BAD_REQUEST) );
+    }
+
     @DeleteMapping("{id}")
     public ResponseEntity delete(@PathVariable Long id) {
         try {
@@ -60,13 +82,15 @@ public class LancamentoController {
     public ResponseEntity buscar(@RequestParam(value = "descricao", required = false) String descricao,
                                  @RequestParam(value = "mes", required = false) Integer mes,
                                  @RequestParam(value = "ano", required = false) Integer ano,
-                                 @RequestParam(value = "usuario", required = false) Long usuario
+                                 @RequestParam(value = "usuario") Long usuario,
+                                 @RequestParam(value = "tipo", required = false) String tipo
     ) {
         try {
             Lancamento lancamento = new Lancamento();
             lancamento.setDescricao(descricao);
             lancamento.setAno(ano);
             lancamento.setMes(mes);
+            lancamento.setTipo(tipo != null ? TipoLancamento.valueOf(tipo) : null);
             lancamento.setUsuario(usuarioService.buscarUsuarioPorId(usuario).orElse(null));
             if (lancamento.getUsuario() == null) {
                 ResponseEntity.badRequest().body("Não foi possivel realizar a consulta, usuario não encontado");

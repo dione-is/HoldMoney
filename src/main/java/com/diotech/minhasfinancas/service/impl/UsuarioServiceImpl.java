@@ -1,6 +1,7 @@
 package com.diotech.minhasfinancas.service.impl;
 
 import com.diotech.minhasfinancas.entity.Usuario;
+import com.diotech.minhasfinancas.enums.TipoLancamento;
 import com.diotech.minhasfinancas.exception.ErroAutenticacao;
 import com.diotech.minhasfinancas.exception.RegraNegocioException;
 import com.diotech.minhasfinancas.repository.UsuarioRepository;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
@@ -24,7 +26,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public Usuario autenticar(String email, String senha) {
         Optional<Usuario> usuario = repository.findByEmailAndSenha(email, senha);
-        if(usuario.isPresent()){
+        if (usuario.isPresent()) {
             return usuario.get();
         }
         throw new ErroAutenticacao("Email ou Senha Invalido");
@@ -48,6 +50,15 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public Optional<Usuario> buscarUsuarioPorId(Long id) {
         return repository.findById(id);
+    }
+
+    @Override
+    public BigDecimal BuscarSaldoUsuario(Long id) {
+
+        BigDecimal receita = repository.buscarSaldoPorUsuarioAndTipoLancamento(id, TipoLancamento.RECEITA.toString());
+        BigDecimal despesa = repository.buscarSaldoPorUsuarioAndTipoLancamento(id, TipoLancamento.DESPESA.toString());
+        receita = receita == null ? BigDecimal.ZERO : receita;
+        return receita.subtract(despesa == null ? BigDecimal.ZERO : despesa);
     }
 
 
