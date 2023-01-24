@@ -1,6 +1,8 @@
 package com.diotech.minhasfinancas.service;
 
+import com.diotech.minhasfinancas.entity.Lancamento;
 import com.diotech.minhasfinancas.entity.Usuario;
+import com.diotech.minhasfinancas.enums.TipoLancamento;
 import com.diotech.minhasfinancas.repository.UsuarioRepository;
 import com.diotech.minhasfinancas.service.impl.UsuarioServiceImpl;
 import org.assertj.core.api.Assertions;
@@ -14,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.math.BigDecimal;
+
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
@@ -25,6 +29,9 @@ public class UsuarioServiceTest {
 
     @Autowired
     UsuarioRepository repository;
+
+    @Autowired
+    LancamentoService lancamentoService;
 
     @Test
     @Order(1)
@@ -42,8 +49,6 @@ public class UsuarioServiceTest {
     @Test
     @Order(3)
     public void hasEmailCasdastrado() {
-        Usuario usuario = criarUsuario();
-
         org.junit.jupiter.api.Assertions.assertThrows(RuntimeException.class, () -> service.validarEmail("dione0905@gmail.com"));
     }
 
@@ -60,7 +65,26 @@ public class UsuarioServiceTest {
     @Order(5)
     public void autenticarUsuarioError() {
         org.junit.jupiter.api.Assertions.assertThrows(RuntimeException.class, () -> service.autenticar("dione0905@gmail.com", "123456"));
+    }
 
+    @Test
+    @Order(6)
+    public void obterUsuarioPorId() {
+        Assertions.assertThat(service.buscarUsuarioPorId(1L).orElse(null)).isNotNull();
+    }
+
+    @Test
+    @Order(7)
+    public void buscarSaldoUsuario() {
+        Lancamento lancamento = Lancamento.builder().usuario(service.buscarUsuarioPorId(1L).orElse(null))
+                .ano(2022)
+                .mes(1)
+                .descricao("teste")
+                .usuario(new Usuario(1L, "dione", "dione@email", "123mudar"))
+                .tipo(TipoLancamento.RECEITA)
+                .valor(BigDecimal.valueOf(580.80)).build();
+        lancamentoService.salvar(lancamento);
+        Assertions.assertThat(service.BuscarSaldoUsuario(1L).stripTrailingZeros()).isEqualTo(BigDecimal.valueOf(580.80));
     }
 
     public static Usuario criarUsuario() {
