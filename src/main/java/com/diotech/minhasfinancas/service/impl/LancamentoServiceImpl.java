@@ -51,8 +51,9 @@ public class LancamentoServiceImpl implements LancamentoService {
     public void deletar(Long id) {
         if (id != null) {
             repository.deleteById(id);
+        }else {
+            throw new RegraNegocioException("Lancamento invalido");
         }
-        throw new RegraNegocioException("Lancamento invalido");
     }
 
     @Override

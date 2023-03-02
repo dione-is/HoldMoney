@@ -2,6 +2,7 @@ package com.diotech.minhasfinancas.entity;
 
 import com.diotech.minhasfinancas.enums.StatusLancamento;
 import com.diotech.minhasfinancas.enums.TipoLancamento;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "lancamento", schema = "financas")
 @Data
+@Builder
 public class Lancamento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,4 +40,20 @@ public class Lancamento {
     @Enumerated(EnumType.STRING)
     private StatusLancamento status;
 
+    public Lancamento() {
+
+    }
+
+
+    public Lancamento(Long id, String descricao, Integer mes, Integer ano, Usuario usuario, BigDecimal valor, LocalDate dataCadastro, TipoLancamento tipo, StatusLancamento status) {
+        this.id = id;
+        this.descricao = descricao;
+        this.mes = mes;
+        this.ano = ano;
+        this.usuario = usuario;
+        this.valor = valor;
+        this.dataCadastro = dataCadastro;
+        this.tipo = tipo;
+        this.status = status;
+    }
 }
