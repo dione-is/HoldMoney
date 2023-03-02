@@ -22,11 +22,15 @@ public class Usuario {
     @Column(name = "senha")
     private String senha;
 
-    public Usuario(Long id, String nome, String email, String senha) {
+    @Column(name = "telefone")
+    private String telefone;
+
+    public Usuario(Long id, String nome, String email, String senha, String telefone) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
+        this.telefone = telefone;
     }
 
     public Usuario() {
