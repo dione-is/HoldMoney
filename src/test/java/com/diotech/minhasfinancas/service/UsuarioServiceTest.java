@@ -80,7 +80,7 @@ public class UsuarioServiceTest {
                 .ano(2022)
                 .mes(1)
                 .descricao("teste")
-                .usuario(new Usuario(1L, "dione", "dione@email", "123mudar"))
+                .usuario(new Usuario(1L, "dione", "dione@email", "123mudar","44991464031"))
                 .tipo(TipoLancamento.RECEITA)
                 .valor(BigDecimal.valueOf(580.80)).build();
         lancamentoService.salvar(lancamento);

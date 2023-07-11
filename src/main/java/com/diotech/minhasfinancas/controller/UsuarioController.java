@@ -1,8 +1,10 @@
 package com.diotech.minhasfinancas.controller;
 
+import com.diotech.minhasfinancas.dto.TokenDTO;
 import com.diotech.minhasfinancas.entity.Usuario;
 import com.diotech.minhasfinancas.exception.ErroAutenticacao;
 import com.diotech.minhasfinancas.exception.RegraNegocioException;
+import com.diotech.minhasfinancas.service.JwtService;
 import com.diotech.minhasfinancas.service.UsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,9 @@ public class UsuarioController {
     @Autowired
     UsuarioService service;
 
+    @Autowired
+    JwtService jwtService;
+
     private final Logger logger = LoggerFactory.getLogger(String.class);
 
     @PostMapping("/")
@@ -33,10 +38,12 @@ public class UsuarioController {
     }
 
     @PostMapping("/autenticar")
-    public ResponseEntity<Usuario> autenticar(@RequestBody Usuario usuario) {
+    public ResponseEntity<TokenDTO> autenticar(@RequestBody Usuario usuario) {
         try {
             usuario = service.autenticar(usuario.getEmail(), usuario.getSenha());
-            return ResponseEntity.ok(usuario);
+            String token = jwtService.GerarToken(usuario);
+            TokenDTO tokenDTO = new TokenDTO(usuario.getNome(), token);
+            return ResponseEntity.ok(tokenDTO);
         } catch (ErroAutenticacao e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
